@@ -1,13 +1,12 @@
 import operator
 # puzzle input
-with open("input") as file:
+with open("testinput") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
 
 
 # monkey class
 class Monkey:
-    def __init__(self, nr, itemlist, inspect_operator, inspect_value, test_divisor, true_monkey_nr, false_monkey_nr):
-        self.number = nr
+    def __init__(self, itemlist, inspect_operator, inspect_value, test_divisor, true_monkey_nr, false_monkey_nr):
         self.items = []
         for item in itemlist:
             self.items.append(int(item))
@@ -30,10 +29,11 @@ class Monkey:
                 thrown_items[self.false_monkey_nr].append(item)
             else:
                 thrown_items[self.true_monkey_nr].append(item)
+        self.items = []
         return thrown_items
 
     def catchItems(self, catched_items):
-        self.items.append(catched_items)
+        self.items += catched_items
 
 
 # prep for formatting input
@@ -51,21 +51,19 @@ for line in rawdata:
         attribute = line.split(":")
         if attribute[1]:
             monkey_attributes.append(attribute[1])
-        else:
-            monkey_attributes.append(attribute[0][-1])
-
+monkeys.append(monkey_attributes)
 
 # creating monkey objects
 for attributes in monkeys:
-    inspect_operation = attributes[2].split(" ")
+    inspect_operation = attributes[1].split(" ")
     attribute_inspect_value = inspect_operation[-1]
     if attribute_inspect_value == "old":
         attribute_inspect_value = 2
         attribute_inspect_operator = operator.mul
     else:
         attribute_inspect_operator = operators[inspect_operation[-2]]
-    monkey = Monkey(attributes[0], attributes[1].split(", "), attribute_inspect_operator, attribute_inspect_value,
-                    attributes[3].split(" ")[-1], attributes[4].split(" ")[-1], attributes[5].split(" ")[-1])
+    monkey = Monkey(attributes[0].split(", "), attribute_inspect_operator, attribute_inspect_value,
+                    attributes[2].split(" ")[-1], attributes[3].split(" ")[-1], attributes[4].split(" ")[-1])
     analysed_monkeys.append(monkey)
 
 # monkeys playing their game part 1
@@ -82,4 +80,5 @@ for monkey in analysed_monkeys:
     monkey_activity.append(monkey.total_inspections)
 monkey_activity.sort()
 monkey_business = monkey_activity[-1] * monkey_activity[-2]
+print(monkey_activity)
 print("Part 1:", monkey_business)
