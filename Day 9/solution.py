@@ -46,5 +46,6 @@ for line in rawdata:
         tail_positions_part1[(knots[1].x, knots[1].y)] = True
         tail_positions_part2[(knots[-1].x, knots[-1].y)] = True
 
+print(tail_positions_part2)
 print("Part 1", len(tail_positions_part1))
 print("Part 2", len(tail_positions_part2))
