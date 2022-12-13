@@ -12,20 +12,16 @@ class Monkey:
         for item in itemlist:
             self.items.append(int(item))
         self.inspect_operator = inspect_operator
-        self.inspect_value = inspect_value
+        self.inspect_value = int(inspect_value)
         self.test_divisor = int(test_divisor)
-        self.true_monkey_nr = true_monkey_nr
-        self.false_monkey_nr = false_monkey_nr
+        self.true_monkey_nr = int(true_monkey_nr)
+        self.false_monkey_nr = int(false_monkey_nr)
         self.total_inspections = 0
 
-    def inspectItems(self):
-        for item in self.items:
+    def inspectItems(self, divisor):
+        for index, item in enumerate(self.items):
             self.total_inspections += 1
-            item = self.inspect_operator(item, self.inspect_value)
-
-    def relief(self):
-        for item in self.items:
-            item //= 3
+            self.items[index] = self.inspect_operator(item, self.inspect_value) // divisor
 
     def throwItems(self):
         thrown_items = {self.true_monkey_nr: [], self.false_monkey_nr: []}
@@ -72,11 +68,10 @@ for attributes in monkeys:
                     attributes[3].split(" ")[-1], attributes[4].split(" ")[-1], attributes[5].split(" ")[-1])
     analysed_monkeys.append(monkey)
 
-# monkeys playing their game
+# monkeys playing their game part 1
 for i in range(20):
     for monkey in analysed_monkeys:
-        monkey.inspectItems()
-        monkey.relief()
+        monkey.inspectItems(3)
         items_to_catch = monkey.throwItems()
         for catcher, items in items_to_catch.items():
             analysed_monkeys[catcher].catchItems(items)
