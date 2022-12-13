@@ -13,25 +13,19 @@ class Monkey:
             self.items.append(int(item))
         self.inspect_operator = inspect_operator
         self.inspect_value = inspect_value
-        self.test_divisor = test_divisor
+        self.test_divisor = int(test_divisor)
         self.true_monkey_nr = true_monkey_nr
         self.false_monkey_nr = false_monkey_nr
         self.total_inspections = 0
 
     def inspectItems(self):
-        inspected_items = []
         for item in self.items:
             self.total_inspections += 1
             item = self.inspect_operator(item, self.inspect_value)
-            inspected_items.append(item)
-        self.items = inspected_items
 
     def relief(self):
-        inspected_items = []
         for item in self.items:
             item //= 3
-            inspected_items.append(item)
-        self.items = inspected_items
 
     def throwItems(self):
         thrown_items = {self.true_monkey_nr: [], self.false_monkey_nr: []}
@@ -43,7 +37,7 @@ class Monkey:
         return thrown_items
 
     def catchItems(self, catched_items):
-        self.items += catched_items
+        self.items.append(catched_items)
 
 
 # prep for formatting input
