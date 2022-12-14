@@ -1,7 +1,7 @@
 import ast
 import functools
 # puzzle input
-with open("input") as file:
+with open("testinput") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
 rawdata.append("")
 
@@ -73,11 +73,11 @@ for line in rawdata:
         packet_2 = ast.literal_eval(line)
     else:
         pair_index += 1
-        if comparePackets(packet_1, packet_2):
+        if comparePackets(packet_1, packet_2) > 0:
             sum_of_indices += pair_index
 
 print("Part 1:", sum_of_indices)
 
 packet_list_part2 += [[[2]], [[6]]]
-packet_list_part2 = sorted(packet_list_part2, key=functools.cmp_to_key(comparePackets))
-print("Part 2", packet_list_part2.index([[2]])*packet_list_part2.index([[6]]))
+packet_list_part2 = sorted(packet_list_part2, key=functools.cmp_to_key(comparePackets), reverse=True)
+print("Part 2:", (packet_list_part2.index([[2]]) + 1) * (packet_list_part2.index([[6]]) + 1))
