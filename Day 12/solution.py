@@ -15,9 +15,10 @@ class Map:
         self.paths[coordinate] = []
         for neighbour in neighbours:
             if neighbour in self.coordinates:
-                if abs(self.coordinates[coordinate] - self.coordinates[neighbour]) <= 1:
-                    self.paths[coordinate].append(neighbour)
+                if self.coordinates[coordinate] - self.coordinates[neighbour] <= 1:
                     self.paths[neighbour].append(coordinate)
+                if self.coordinates[neighbour] - self.coordinates[coordinate] <= 1:
+                    self.paths[coordinate].append(neighbour)
 
 
 heightmap = Map()
@@ -33,30 +34,36 @@ for y, line in enumerate(rawdata):
             heightmap.addCoordinate((x, y), special_coords[letter])
             special_coords[letter] = (x, y)
 
-# find shortest route
-distances = {special_coords["S"]: 0}
-to_be_checked_now = [special_coords["S"]]
-to_be_checked_next = []
-end = special_coords["E"]
-while end not in distances:
-    for route_start in to_be_checked_now:
-        distance = distances[route_start] + 1
-        for route_end in heightmap.paths[route_start]:
-            if route_end not in distances:
-                distances[route_end] = distance
-                to_be_checked_next.append(route_end)
-    to_be_checked_now = to_be_checked_next
+
+# find shortest route part 1
+def findShortestRoute(startpoint):
+    distances = {startpoint: 0}
+    to_be_checked_now = [startpoint]
     to_be_checked_next = []
+    end = special_coords["E"]
+    while to_be_checked_now:
+        for route_start in to_be_checked_now:
+            distance = distances[route_start] + 1
+            for route_end in heightmap.paths[route_start]:
+                if route_end not in distances:
+                    distances[route_end] = distance
+                    to_be_checked_next.append(route_end)
+        to_be_checked_now = to_be_checked_next
+        to_be_checked_next = []
+    if end in distances:
+        return distances[end]
+    else:
+        return False
 
-print("Part 1:", distances[end])
 
-# print map
-for y in range(5):
-    line = ""
-    for x in range(8):
-        if (x, y) in distances:
-            line += "{:03d}".format(distances[(x, y)])
-        else:
-            line += "xx"
-        line += "_"
-    print(line)
+shortest_distance = findShortestRoute(special_coords["S"])
+print("Part 1:", shortest_distance)
+
+# find shortest route part 2
+for startpoint_a, height in heightmap.coordinates.items():
+    if height == 0:
+        distance = findShortestRoute(startpoint_a)
+        if distance and distance < shortest_distance:
+            shortest_distance = distance
+
+print("Part 2:", shortest_distance)
