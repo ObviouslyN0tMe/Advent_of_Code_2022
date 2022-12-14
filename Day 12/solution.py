@@ -35,21 +35,22 @@ for y, line in enumerate(rawdata):
 
 # find shortest route
 distances = {special_coords["S"]: 0}
-next_step = [special_coords["S"]]
-to_be_checked = []
+to_be_checked_now = [special_coords["S"]]
+to_be_checked_next = []
 end = special_coords["E"]
 while end not in distances:
-    for route_start in next_step:
-        distance = distances[route_start]
+    for route_start in to_be_checked_now:
+        distance = distances[route_start] + 1
         for route_end in heightmap.paths[route_start]:
             if route_end not in distances:
-                distances[route_end] = distance + 1
-                to_be_checked.append(route_end)
-    next_step = to_be_checked
-    to_be_checked = []
+                distances[route_end] = distance
+                to_be_checked_next.append(route_end)
+    to_be_checked_now = to_be_checked_next
+    to_be_checked_next = []
 
-print(distances[end])
+print("Part 1:", distances[end])
 
+# print map
 for y in range(5):
     line = ""
     for x in range(8):
