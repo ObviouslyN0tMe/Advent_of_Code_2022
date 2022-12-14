@@ -1,7 +1,7 @@
 import ast
 import functools
 # puzzle input
-with open("testinput") as file:
+with open("input") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
 rawdata.append("")
 
@@ -18,7 +18,7 @@ def comparePackets(packet1, packet2):
                 element2 = [element2]
             # new comparison of 2 lists
             comparison = comparePackets(element1, element2)
-            if comparison == "equal":
+            if comparison == 0:
                 packet1.pop(0)
                 packet2.pop(0)
             else:
@@ -33,7 +33,7 @@ def comparePackets(packet1, packet2):
     elif packet2:
         return 1
     else:
-        return "equal"
+        return 0
 
 
 # michis variante
@@ -78,6 +78,9 @@ for line in rawdata:
 
 print("Part 1:", sum_of_indices)
 
-packet_list_part2 += [[[2]], [[6]]]
-packet_list_part2 = sorted(packet_list_part2, key=functools.cmp_to_key(comparePackets), reverse=True)
-print("Part 2:", (packet_list_part2.index([[2]]) + 1) * (packet_list_part2.index([[6]]) + 1))
+a = [[2]]
+b = [[6]]
+packet_list_part2.append(a)
+packet_list_part2.append(b)
+packet_list_part2 = sorted(packet_list_part2, key=functools.cmp_to_key(comparePackets))
+print("Part 2:", (packet_list_part2.index(a) + 1) * (packet_list_part2.index(b) + 1))
