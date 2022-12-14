@@ -1,6 +1,6 @@
 import ast
 # puzzle input
-with open("input") as file:
+with open("testinput") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
 
 
@@ -33,6 +33,27 @@ def comparePackets(packet1, packet2):
     else:
         return "equal"
 
+def compare(left, right):
+    if type(left) == int and type(right) == int:
+        return left < right
+    if len(left) == 0:
+        return True
+    if len(right) == 0:
+        return False
+    else:
+        leftElement = left.pop(0)
+        rightElement = right.pop(0)
+        if type(leftElement) == list or type(rightElement) == list:
+            leftElement = leftElement if type(leftElement) == list else [leftElement]
+            rightElement = rightElement if type(rightElement) == list else [rightElement]
+
+        if compare(leftElement, rightElement):
+            return True
+        elif compare(rightElement, leftElement):
+            return False
+        else:
+            return compare(left, right)
+
 
 packet_1 = ""
 packet_2 = ""
@@ -45,12 +66,12 @@ for line in rawdata:
         packet_2 = ast.literal_eval(line)
     else:
         pair_index += 1
-        if comparePackets(packet_1, packet_2):
+        print(packet_1)
+        print(packet_2)
+        if compare(packet_1, packet_2):
             sum_of_indices += pair_index
             print(True)
         else:
             print(False)
-        packet_1 = ""
-        packet_2 = ""
 
 print("Part 1:", sum_of_indices)
