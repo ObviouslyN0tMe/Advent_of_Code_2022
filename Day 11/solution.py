@@ -1,11 +1,14 @@
 import operator
+import copy
 # puzzle input
-with open("testinput") as file:
+with open("input") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
 
 
 # monkey class
 class Monkey:
+    modulo = 1
+
     def __init__(self, itemlist, inspect_operator, inspect_value, test_divisor, true_monkey_nr, false_monkey_nr):
         self.items = []
         for item in itemlist:
@@ -16,11 +19,12 @@ class Monkey:
         self.true_monkey_nr = int(true_monkey_nr)
         self.false_monkey_nr = int(false_monkey_nr)
         self.total_inspections = 0
+        Monkey.modulo *= self.test_divisor
 
     def inspectItems(self, divisor):
         for index, item in enumerate(self.items):
             self.total_inspections += 1
-            self.items[index] = self.inspect_operator(item, self.inspect_value) // divisor
+            self.items[index] = (self.inspect_operator(item, self.inspect_value) // divisor) % Monkey.modulo
 
     def throwItems(self):
         thrown_items = {self.true_monkey_nr: [], self.false_monkey_nr: []}
@@ -59,12 +63,14 @@ for attributes in monkeys:
     attribute_inspect_value = inspect_operation[-1]
     if attribute_inspect_value == "old":
         attribute_inspect_value = 2
-        attribute_inspect_operator = operator.mul
+        attribute_inspect_operator = operator.pow
     else:
         attribute_inspect_operator = operators[inspect_operation[-2]]
     monkey = Monkey(attributes[0].split(", "), attribute_inspect_operator, attribute_inspect_value,
                     attributes[2].split(" ")[-1], attributes[3].split(" ")[-1], attributes[4].split(" ")[-1])
     analysed_monkeys.append(monkey)
+
+analysed_monkeys_part2 = copy.deepcopy(analysed_monkeys)
 
 # monkeys playing their game part 1
 for i in range(20):
@@ -74,11 +80,26 @@ for i in range(20):
         for catcher, items in items_to_catch.items():
             analysed_monkeys[catcher].catchItems(items)
 
-# check for monkey business
+# check for monkey business part 1
 monkey_activity = []
 for monkey in analysed_monkeys:
     monkey_activity.append(monkey.total_inspections)
 monkey_activity.sort()
 monkey_business = monkey_activity[-1] * monkey_activity[-2]
-print(monkey_activity)
 print("Part 1:", monkey_business)
+
+# monkeys playing their game part 2
+for i in range(10000):
+    for monkey in analysed_monkeys_part2:
+        monkey.inspectItems(1)
+        items_to_catch = monkey.throwItems()
+        for catcher, items in items_to_catch.items():
+            analysed_monkeys_part2[catcher].catchItems(items)
+
+# check for monkey business part 2
+monkey_activity = []
+for monkey in analysed_monkeys_part2:
+    monkey_activity.append(monkey.total_inspections)
+monkey_activity.sort()
+monkey_business = monkey_activity[-1] * monkey_activity[-2]
+print("Part 2:", monkey_business)
