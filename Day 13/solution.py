@@ -1,7 +1,9 @@
 import ast
+import functools
 # puzzle input
-with open("testinput") as file:
+with open("input") as file:
     rawdata = [x.strip("\n") for x in file.readlines()]
+rawdata.append("")
 
 
 def comparePackets(packet1, packet2):
@@ -22,56 +24,60 @@ def comparePackets(packet1, packet2):
             else:
                 return comparison
         elif element1 != element2:
-            return element1 < element2
+            return element2 - element1
         else:
             packet1.pop(0)
             packet2.pop(0)
     if packet1:
-        return False
+        return -1
     elif packet2:
-        return True
+        return 1
     else:
         return "equal"
 
+
+# michis variante
 def compare(left, right):
-    if type(left) == int and type(right) == int:
+    if left == right:
+        return "equal"
+    if type(left) == int:
         return left < right
     if len(left) == 0:
         return True
     if len(right) == 0:
         return False
     else:
-        leftElement = left.pop(0)
-        rightElement = right.pop(0)
-        if type(leftElement) == list or type(rightElement) == list:
-            leftElement = leftElement if type(leftElement) == list else [leftElement]
-            rightElement = rightElement if type(rightElement) == list else [rightElement]
+        left_element = left.pop(0)
+        right_element = right.pop(0)
+        if type(left_element) == list or type(right_element) == list:
+            left_element = left_element if type(left_element) == list else [left_element]
+            right_element = right_element if type(right_element) == list else [right_element]
 
-        if compare(leftElement, rightElement):
-            return True
-        elif compare(rightElement, leftElement):
-            return False
-        else:
+        comparison = compare(left_element, right_element)
+        if comparison == "equal":
             return compare(left, right)
+        else:
+            return comparison
 
 
 packet_1 = ""
 packet_2 = ""
 pair_index = 0
 sum_of_indices = 0
+packet_list_part2 = []
 
 for line in rawdata:
     if line:
+        packet_list_part2.append(ast.literal_eval(line))
         packet_1 = packet_2
         packet_2 = ast.literal_eval(line)
     else:
         pair_index += 1
-        print(packet_1)
-        print(packet_2)
-        if compare(packet_1, packet_2):
+        if comparePackets(packet_1, packet_2):
             sum_of_indices += pair_index
-            print(True)
-        else:
-            print(False)
 
 print("Part 1:", sum_of_indices)
+
+packet_list_part2 += [[[2]], [[6]]]
+packet_list_part2 = sorted(packet_list_part2, key=functools.cmp_to_key(comparePackets))
+print("Part 2", packet_list_part2.index([[2]])*packet_list_part2.index([[6]]))
